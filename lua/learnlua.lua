@@ -1,90 +1,89 @@
--- 单行注释以两个连字符开头
+-- Two dashes start a one-line comment.
 
 --[[
-     多行注释
+     Adding two ['s and ]'s makes it a
+     multi-line comment.
 --]]
 
 ----------------------------------------------------
--- 1. 变量和流程控制
+-- 1. Variables and flow control.
 ----------------------------------------------------
 
-num = 42  -- 所有的数字都是双精度浮点型。
--- 别害怕，64位的双精度浮点型数字中有52位用于
--- 保存精确的整型值; 对于52位以内的整型值，
--- 不用担心精度问题。
+num = 42  -- Numbers can be integer or floating point.
 
-s = 'walternate'  -- 和Python一样，字符串不可变。
-t = "也可以用双引号"
-u = [[ 多行的字符串
-       以两个方括号
-       开始和结尾。]]
-t = nil  -- 撤销t的定义; Lua 支持垃圾回收。
+s = 'walternate'  -- Immutable strings like Python.
+t = "double-quotes are also fine"
+u = [[ Double brackets
+       start and end
+       multi-line strings.]]
+t = nil  -- Undefines t; Lua has garbage collection.
 
--- 块使用do/end之类的关键字标识：
+-- Blocks are denoted with keywords like do/end:
 while num < 50 do
-  num = num + 1  -- 不支持 ++ 或 += 运算符。
+  num = num + 1  -- No ++ or += type operators.
 end
 
--- If语句：
+-- If clauses:
 if num > 40 then
   print('over 40')
-elseif s ~= 'walternate' then  -- ~= 表示不等于。
-  -- 像Python一样，用 == 检查是否相等 ；字符串同样适用。
-  io.write('not over 40\n')  -- 默认标准输出。
+elseif s ~= 'walternate' then  -- ~= is not equals.
+  -- Equality check is == like Python; ok for strs.
+  io.write('not over 40\n')  -- Defaults to stdout.
 else
-  -- 默认全局变量。
-  thisIsGlobal = 5  -- 通常使用驼峰。
+  -- Variables are global by default.
+  thisIsGlobal = 5  -- Camel case is common.
 
-  -- 如何定义局部变量：
-  local line = io.read()  -- 读取标准输入的下一行。
+  -- How to make a variable local:
+  local line = io.read()  -- Reads next stdin line.
 
-  -- ..操作符用于连接字符串：
+  -- String concatenation uses the .. operator:
   print('Winter is coming, ' .. line)
 end
 
--- 未定义的变量返回nil。
--- 这不是错误：
-foo = anUnknownVariable  -- 现在 foo = nil.
+-- Undefined variables return nil.
+-- This is not an error:
+foo = anUnknownVariable  -- Now foo = nil.
 
 aBoolValue = false
 
---只有nil和false为假; 0和 ''均为真！
-if not aBoolValue then print('false') end
+-- Only nil and false are falsy; 0 and '' are true!
+if not aBoolValue then print('it was false') end
 
--- 'or'和 'and'短路
--- 类似于C/js里的 a?b:c 操作符：
+-- 'or' and 'and' are short-circuited.
+-- This is similar to the a?b:c operator in C/js:
 ans = aBoolValue and 'yes' or 'no'  --> 'no'
 
 karlSum = 0
-for i = 1, 100 do  -- 范围包含两端
+for i = 1, 100 do  -- The range includes both ends.
   karlSum = karlSum + i
 end
 
--- 使用 "100, 1, -1" 表示递减的范围：
+-- Use "100, 1, -1" as the range to count down:
 fredSum = 0
 for j = 100, 1, -1 do fredSum = fredSum + j end
 
--- 通常，范围表达式为begin, end[, step].
+-- In general, the range is begin, end[, step].
 
--- 循环的另一种结构：
+-- Another loop construct:
 repeat
   print('the way of the future')
   num = num - 1
 until num == 0
 
+
 ----------------------------------------------------
--- 2. 函数。
+-- 2. Functions.
 ----------------------------------------------------
 
 function fib(n)
-  if n < 2 then return n end
+  if n < 2 then return 1 end
   return fib(n - 2) + fib(n - 1)
 end
 
--- 支持闭包及匿名函数：
+-- Closures and anonymous functions are ok:
 function adder(x)
-  -- 调用adder时，会创建返回的函数，
-  -- 并且会记住x的值：
+  -- The returned function is created when adder is
+  -- called, and remembers the value of x:
   return function (y) return x + y end
 end
 a1 = adder(9)
@@ -92,112 +91,108 @@ a2 = adder(36)
 print(a1(16))  --> 25
 print(a2(64))  --> 100
 
--- 返回值、函数调用和赋值都可以
--- 使用长度不匹配的list。
--- 不匹配的接收方会被赋值nil；
--- 不匹配的发送方会被丢弃。
+-- Returns, func calls, and assignments all work
+-- with lists that may be mismatched in length.
+-- Unmatched receivers are nil;
+-- unmatched senders are discarded.
 
 x, y, z = 1, 2, 3, 4
--- x = 1、y = 2、z = 3, 而 4 会被丢弃。
+-- Now x = 1, y = 2, z = 3, and 4 is thrown away.
 
 function bar(a, b, c)
   print(a, b, c)
   return 4, 8, 15, 16, 23, 42
 end
 
-x, y = bar('zaphod')  --> 打印 "zaphod  nil nil"
--- 现在 x = 4, y = 8, 而值15..42被丢弃。
+x, y = bar('zaphod')  --> prints "zaphod  nil nil"
+-- Now x = 4, y = 8, values 15...42 are discarded.
 
--- 函数是一等公民，可以是局部的，也可以是全局的。
--- 以下表达式等价：
+-- Functions are first-class, may be local/global.
+-- These are the same:
 function f(x) return x * x end
 f = function (x) return x * x end
 
--- 这些也是等价的：
+-- And so are these:
 local function g(x) return math.sin(x) end
-local g; g = function (x) return math.sin(x) end
--- 以上均因'local g'，使得g可以自引用。
-local g = function(x) return math.sin(x) end
--- 等价于 local function g(x)..., 但函数体中g不可自引用
+local g; g  = function (x) return math.sin(x) end
+-- the 'local g' decl makes g-self-references ok.
 
--- 顺便提下，三角函数以弧度为单位。
+-- Trig funcs work in radians, by the way.
 
--- 用一个字符串参数调用函数，可以省略括号：
-print 'hello'  --可以工作。
+-- Calls with one string param don't need parens:
+print 'hello'  -- Works fine.
 
--- 调用函数时，如果只有一个table参数，
--- 同样可以省略括号（table详情见下）：
-print {} -- 一样可以工作。
 
 ----------------------------------------------------
--- 3. Table。
+-- 3. Tables.
 ----------------------------------------------------
 
--- Table = Lua唯一的组合数据结构;
---         它们是关联数组。
--- 类似于PHP的数组或者js的对象，
--- 它们是哈希表或者字典，也可以当列表使用。
+-- Tables = Lua's only compound data structure;
+--          they are associative arrays.
+-- Similar to php arrays or js objects, they are
+-- hash-lookup dicts that can also be used as lists.
 
--- 按字典/map的方式使用Table：
+-- Using tables as dictionaries / maps:
 
--- Dict字面量默认使用字符串类型的key：
+-- Dict literals have string keys by default:
 t = {key1 = 'value1', key2 = false}
 
--- 字符串key可以使用类似js的点标记：
-print(t.key1)  -- 打印 'value1'.
-t.newKey = {}  -- 添加新的键值对。
-t.key2 = nil   -- 从table删除 key2。
+-- String keys can use js-like dot notation:
+print(t.key1)  -- Prints 'value1'.
+t.newKey = {}  -- Adds a new key/value pair.
+t.key2 = nil   -- Removes key2 from the table.
 
--- 使用任何非nil的值作为key：
+-- Literal notation for any (non-nil) value as key:
 u = {['@!#'] = 'qbert', [{}] = 1729, [6.28] = 'tau'}
-print(u[6.28])  -- 打印 "tau"
+print(u[6.28])  -- prints "tau"
 
--- 数字和字符串的key按值匹配的
--- table按id匹配。
-a = u['@!#']  -- 现在 a = 'qbert'.
-b = u[{}]     -- 我们或许期待的是 1729,  但是得到的是nil:
--- b = nil ，因为没有找到。
--- 之所以没找到，是因为我们用的key与保存数据时用的不是同
--- 一个对象。
--- 所以字符串和数字是移植性更好的key。
+-- Key matching is basically by value for numbers
+-- and strings, but by identity for tables.
+a = u['@!#']  -- Now a = 'qbert'.
+b = u[{}]     -- We might expect 1729, but it's nil:
+-- b = nil since the lookup fails. It fails
+-- because the key we used is not the same object
+-- as the one used to store the original value. So
+-- strings & numbers are more portable keys.
 
--- 只需要一个table参数的函数调用不需要括号：
+-- A one-table-param function call needs no parens:
 function h(x) print(x.key1) end
-h{key1 = 'Sonmi~451'}  -- 打印'Sonmi~451'.
+h{key1 = 'Sonmi~451'}  -- Prints 'Sonmi~451'.
 
-for key, val in pairs(u) do  -- 遍历Table
+for key, val in pairs(u) do  -- Table iteration.
   print(key, val)
 end
 
--- _G 是一个特殊的table，用于保存所有的全局变量
-print(_G['_G'] == _G)  -- 打印'true'.
+-- _G is a special table of all globals.
+print(_G['_G'] == _G)  -- Prints 'true'.
 
--- 按列表/数组的方式使用：
+-- Using tables as lists / arrays:
 
--- 列表字面量隐式添加整数键：
+-- List literals implicitly set up int keys:
 v = {'value1', 'value2', 1.21, 'gigawatts'}
-for i = 1, #v do  -- #v 是列表的大小
-  print(v[i])  -- 索引从 1 开始!! 太疯狂了！
+for i = 1, #v do  -- #v is the size of v for lists.
+  print(v[i])  -- Indices start at 1 !! SO CRAZY!
 end
--- 'list'并非真正的类型，v 其实是一个table，
--- 只不过它用连续的整数作为key，可以像list那样去使用。
+-- A 'list' is not a real type. v is just a table
+-- with consecutive integer keys, treated as a list.
 
 ----------------------------------------------------
--- 3.1 元表（metatable） 和元方法（metamethod）。
+-- 3.1 Metatables and metamethods.
 ----------------------------------------------------
 
--- table的元表提供了一种机制，支持类似操作符重载的行为。
--- 稍后我们会看到元表如何支持类似js prototype的行为。
+-- A table can have a metatable that gives the table
+-- operator-overloadish behavior. Later we'll see
+-- how metatables support js-prototype behavior.
 
-f1 = {a = 1, b = 2}  -- 表示一个分数 a/b.
+f1 = {a = 1, b = 2}  -- Represents the fraction a/b.
 f2 = {a = 2, b = 3}
 
--- 这会失败：
+-- This would fail:
 -- s = f1 + f2
 
 metafraction = {}
 function metafraction.__add(f1, f2)
-  local sum = {}
+  sum = {}
   sum.b = f1.b * f2.b
   sum.a = f1.a * f2.b + f2.a * f1.b
   return sum
@@ -206,31 +201,31 @@ end
 setmetatable(f1, metafraction)
 setmetatable(f2, metafraction)
 
-s = f1 + f2  -- 调用在f1的元表上的__add(f1, f2) 方法
+s = f1 + f2  -- call __add(f1, f2) on f1's metatable
 
--- f1, f2 没有关于元表的key，这点和js的prototype不一样。
--- 因此你必须用getmetatable(f1)获取元表。
--- 元表是一个普通的table，
--- 元表的key是普通的Lua中的key，例如__add。
+-- f1, f2 have no key for their metatable, unlike
+-- prototypes in js, so you must retrieve it as in
+-- getmetatable(f1). The metatable is a normal table
+-- with keys that Lua knows about, like __add.
 
--- 但是下面一行代码会失败，因为s没有元表：
+-- But the next line fails since s has no metatable:
 -- t = s + s
--- 下面提供的与类相似的模式可以解决这个问题：
+-- Class-like patterns given below would fix this.
 
--- 元表的__index 可以重载用于查找的点操作符：
+-- An __index on a metatable overloads dot lookups:
 defaultFavs = {animal = 'gru', food = 'donuts'}
 myFavs = {food = 'pizza'}
 setmetatable(myFavs, {__index = defaultFavs})
-eatenBy = myFavs.animal  -- 可以工作！感谢元表
+eatenBy = myFavs.animal  -- works! thanks, metatable
 
--- 如果在table中直接查找key失败，会使用
--- 元表的__index 递归地重试。
+-- Direct table lookups that fail will retry using
+-- the metatable's __index value, and this recurses.
 
--- __index的值也可以是function(tbl, key)
--- 这样可以支持自定义查找。
+-- An __index value can also be a function(tbl, key)
+-- for more customized lookups.
 
--- __index、__add等的值，被称为元方法。
--- 这里是一个table元方法的清单：
+-- The values of __index, __add, etc. are called
+-- metamethods. Here are some commonly used ones:
 
 -- __add(a, b)                     for a + b
 -- __sub(a, b)                     for a - b
@@ -249,18 +244,18 @@ eatenBy = myFavs.animal  -- 可以工作！感谢元表
 -- __call(a, ...)                  for a(...)
 
 ----------------------------------------------------
--- 3.2 与类相似的table和继承。
+-- 3.2 Class-like tables and inheritance.
 ----------------------------------------------------
 
--- Lua没有内建的类；可以通过不同的方法，利用表和元表
--- 来实现类。
+-- Classes aren't built in; there are different ways
+-- to make them using tables and metatables.
 
--- 下面是一个例子，解释在后面：
+-- Explanation for this example is below it.
 
 Dog = {}                                   -- 1.
 
 function Dog:new()                         -- 2.
-  local newObj = {sound = 'woof'}                -- 3.
+  newObj = {sound = 'woof'}                -- 3.
   self.__index = self                      -- 4.
   return setmetatable(newObj, self)        -- 5.
 end
@@ -272,62 +267,64 @@ end
 mrDog = Dog:new()                          -- 7.
 mrDog:makeSound()  -- 'I say woof'         -- 8.
 
--- 1. Dog看上去像一个类；其实它是一个table。
--- 2. 函数tablename:fn(...) 等价于
---    函数tablename.fn(self, ...)
---    冒号（:）只是添加了self作为第一个参数。
---    阅读7 & 8条 了解self变量是如何得到其值的。
--- 3. newObj是类Dog的一个实例。
--- 4. self = 被继承的类。通常self = Dog，不过继承可以改变它。
---    如果把newObj的元表和__index都设置为self，
---    newObj就可以得到self的函数。
--- 5. 备忘：setmetatable返回其第一个参数。
--- 6. 冒号（：）的作用和第2条一样，不过这里
---    self是一个实例，而不是类
--- 7. 等价于Dog.new(Dog)，所以在new()中，self = Dog。
--- 8. 等价于mrDog.makeSound(mrDog); self = mrDog。
+-- 1. Dog acts like a class; it's really a table.
+-- 2. function tablename:fn(...) is the same as
+--    function tablename.fn(self, ...)
+--    The : just adds a first arg called self.
+--    Read 7 & 8 below for how self gets its value.
+-- 3. newObj will be an instance of class Dog.
+-- 4. self = the class being instantiated. Often
+--    self = Dog, but inheritance can change it.
+--    newObj gets self's functions when we set both
+--    newObj's metatable and self's __index to self.
+-- 5. Reminder: setmetatable returns its first arg.
+-- 6. The : works as in 2, but this time we expect
+--    self to be an instance instead of a class.
+-- 7. Same as Dog.new(Dog), so self = Dog in new().
+-- 8. Same as mrDog.makeSound(mrDog); self = mrDog.
 
 ----------------------------------------------------
 
--- 继承的例子：
+-- Inheritance example:
 
 LoudDog = Dog:new()                           -- 1.
 
 function LoudDog:makeSound()
-  local s = self.sound .. ' '                       -- 2.
+  s = self.sound .. ' '                       -- 2.
   print(s .. s .. s)
 end
 
 seymour = LoudDog:new()                       -- 3.
 seymour:makeSound()  -- 'woof woof woof'      -- 4.
 
--- 1. LoudDog获得Dog的方法和变量列表。
--- 2. 因为new()的缘故，self拥有了一个'sound' key，参见第3条。
--- 3. 等价于LoudDog.new(LoudDog)，转换一下就是
---    Dog.new(LoudDog)，这是因为LoudDog没有'new' key，
---    但是它的元表中有 __index = Dog。
---    结果: seymour的元表是LoudDog，并且
---    LoudDog.__index = Dog。所以有seymour.key
---    = seymour.key, LoudDog.key, Dog.key
---    从其中第一个有指定key的table获取。
--- 4. 在LoudDog可以找到'makeSound'的key；
---    等价于LoudDog.makeSound(seymour)。
+-- 1. LoudDog gets Dog's methods and variables.
+-- 2. self has a 'sound' key from new(), see 3.
+-- 3. Same as LoudDog.new(LoudDog), and converted to
+--    Dog.new(LoudDog) as LoudDog has no 'new' key,
+--    but does have __index = Dog on its metatable.
+--    Result: seymour's metatable is LoudDog, and
+--    LoudDog.__index = LoudDog. So seymour.key will
+--    = seymour.key, LoudDog.key, Dog.key, whichever
+--    table is the first with the given key.
+-- 4. The 'makeSound' key is found in LoudDog; this
+--    is the same as LoudDog.makeSound(seymour).
 
--- 如果有必要，子类也可以有new()，与基类相似：
+-- If needed, a subclass's new() is like the base's:
 function LoudDog:new()
-  local newObj = {}
-  -- 初始化newObj
+  newObj = {}
+  -- set up newObj
   self.__index = self
   return setmetatable(newObj, self)
 end
 
 ----------------------------------------------------
--- 4. 模块
+-- 4. Modules.
 ----------------------------------------------------
 
 
---[[ 我把这部分给注释了，这样脚本剩下的部分可以运行
--- 假设文件mod.lua的内容类似这样：
+--[[ I'm commenting out this section so the rest of
+--   this script remains runnable.
+-- Suppose the file mod.lua looks like this:
 local M = {}
 
 local function sayMyName()
@@ -341,41 +338,40 @@ end
 
 return M
 
--- 另一个文件可以使用mod.lua的功能：
-local mod = require('mod')  -- 运行文件mod.lua.
--- 注意：require 需要配合 LUA_PATH 一起使用 例如：export LUA_PATH="$HOME/workspace/projectName/?.lua;;"
+-- Another file can use mod.lua's functionality:
+local mod = require('mod')  -- Run the file mod.lua.
 
--- require是包含模块的标准做法。
--- require等价于:     (针对没有被缓存的情况；参见后面的内容)
+-- require is the standard way to include modules.
+-- require acts like:     (if not cached; see below)
 local mod = (function ()
   <contents of mod.lua>
 end)()
--- mod.lua被包在一个函数体中，因此mod.lua的局部变量
--- 对外不可见。
+-- It's like mod.lua is a function body, so that
+-- locals inside mod.lua are invisible outside it.
 
--- 下面的代码可以工作，因为在这里mod = mod.lua 中的 M：
-mod.sayHello()  -- Says hello to Hrunkner.
+-- This works because mod here = M in mod.lua:
+mod.sayHello() -- Prints: Why hello there Hrunkner
 
--- 这是错误的；sayMyName只在mod.lua中存在：
-mod.sayMyName()  -- 错误
+-- This is wrong; sayMyName only exists in mod.lua:
+mod.sayMyName()  -- error
 
--- require返回的值会被缓存，所以一个文件只会被运行一次，
--- 即使它被require了多次。
+-- require's return values are cached so a file is
+-- run at most once, even when require'd many times.
 
--- 假设mod2.lua包含代码"print('Hi!')"。
-local a = require('mod2')  -- 打印Hi!
-local b = require('mod2')  -- 不再打印; a=b.
+-- Suppose mod2.lua contains "print('Hi!')".
+local a = require('mod2')  -- Prints Hi!
+local b = require('mod2')  -- Doesn't print; a=b.
 
--- dofile与require类似，但是不缓存：
-dofile('mod2')  --> Hi!
-dofile('mod2')  --> Hi! (再次运行，与require不同)
+-- dofile is like require without caching:
+dofile('mod2.lua')  --> Hi!
+dofile('mod2.lua')  --> Hi! (runs it again)
 
--- loadfile加载一个lua文件，但是并不运行它。
-f = loadfile('mod2')  -- Calling f() runs mod2.lua.
+-- loadfile loads a lua file but doesn't run it yet.
+f = loadfile('mod2.lua')  -- Call f() to run it.
 
--- loadstring是loadfile的字符串版本。
--- (loadstring已弃用, 使用load代替)
-g = load('print(343)')  --返回一个函数。
-g()  -- 打印343; 在此之前什么也不打印。
+-- load is loadfile for strings.
+-- (loadstring is deprecated, use load instead)
+g = load('print(343)')  -- Returns a function.
+g()  -- Prints out 343; nothing printed before now.
 
 --]]
